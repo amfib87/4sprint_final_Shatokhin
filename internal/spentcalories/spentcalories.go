@@ -25,41 +25,31 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	// TODO: реализовать функцию
 	sl := strings.Split(data, ",")
 	var kind string
-	var durat time.Duration
-	var steps int
 
 	if len(sl) != 3 {
-		return 0, " ", 0, fmt.Errorf("Длина слайса != 3")
+		return 0, " ", 0, fmt.Errorf("lenght of slice != 3")
 	}
 
-	for ind, val := range sl {
-		switch ind {
-		case 0:
-			st, err := strconv.Atoi(val)
-			if err != nil {
-				return 0, " ", 0, err
-			}
-			if st <= 0 {
-				return 0, " ", 0, fmt.Errorf("Кол-во шагов <= 0")
-			}
-			steps = st
-
-		case 1:
-			kind = val
-
-		case 2:
-			tm, err := time.ParseDuration(val)
-			if err != nil {
-				return 0, " ", 0, err
-			}
-
-			if tm <= 0 {
-				return 0, " ", 0, fmt.Errorf("неверная продолжительность <= 0")
-			}
-			durat = tm
-		}
+	steps, err := strconv.Atoi(sl[0])
+	if err != nil {
+		return 0, " ", 0, err
 	}
-	return steps, kind, durat, nil
+	if steps <= 0 {
+		return 0, " ", 0, fmt.Errorf("wrong number of steps <= 0")
+	}
+
+	kind = sl[1]
+
+	dur, err := time.ParseDuration(sl[2])
+	if err != nil {
+		return 0, " ", 0, err
+	}
+
+	if dur <= 0 {
+		return 0, " ", 0, fmt.Errorf("wrong duration <= 0")
+	}
+
+	return steps, kind, dur, nil
 }
 
 func distance(steps int, height float64) float64 {
@@ -121,17 +111,19 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
 	// TODO: реализовать функцию
 	if steps <= 0 {
-		return 0, fmt.Errorf("Кол-во шагов <= 0")
+		return 0, fmt.Errorf("number of steps <= 0")
 	}
 
 	if weight <= 0 {
-		return 0, fmt.Errorf("Вес д.б. больше 0")
-	} else if height <= 0 {
-		return 0, fmt.Errorf("Рост д.б. больше 0")
+		return 0, fmt.Errorf("wrong weight <= 0")
+	}
+
+	if height <= 0 {
+		return 0, fmt.Errorf("wrong height <= 0")
 	}
 
 	if duration <= 0 {
-		return 0, fmt.Errorf("Продолжительность д.б. больше 0")
+		return 0, fmt.Errorf("wrong duration <= 0")
 	}
 
 	meanSpeed := meanSpeed(steps, height, duration)
@@ -143,17 +135,19 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
 	// TODO: реализовать функцию
 	if steps <= 0 {
-		return 0, fmt.Errorf("Кол-во шагов <= 0")
+		return 0, fmt.Errorf("number of steps <= 0")
 	}
 
 	if weight <= 0 {
-		return 0, fmt.Errorf("Вес д.б. больше 0")
-	} else if height <= 0 {
-		return 0, fmt.Errorf("Рост д.б. больше 0")
+		return 0, fmt.Errorf("wrong weight <= 0")
+	}
+
+	if height <= 0 {
+		return 0, fmt.Errorf("wrong height <= 0")
 	}
 
 	if duration <= 0 {
-		return 0, fmt.Errorf("Продолжительность д.б. больше 0")
+		return 0, fmt.Errorf("wrong duration <= 0")
 	}
 
 	meanSpeed := meanSpeed(steps, height, duration)

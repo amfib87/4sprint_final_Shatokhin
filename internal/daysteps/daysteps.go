@@ -21,40 +21,30 @@ func parsePackage(data string) (int, time.Duration, error) {
 	// TODO: реализовать функцию
 	sl := strings.Split(data, ",")
 	var tm time.Duration
-	steps := 0
 
 	if len(sl) != 2 {
-		return 0, tm, fmt.Errorf("Длина слайса != 2")
+		return 0, tm, fmt.Errorf("lenght of slice != 2")
 	}
 
-	for ind, val := range sl {
-		if ind == 0 {
-
-			st, err := strconv.Atoi(val)
-			if err != nil {
-				return 0, tm, err
-			}
-
-			if st <= 0 {
-				return 0, tm, fmt.Errorf("Кол-во шагов меньше или равно 0")
-			}
-
-			steps = st
-
-		} else if ind == 1 {
-			tim, err := time.ParseDuration(val)
-			if err != nil {
-				return 0, tm, err
-			}
-
-			if tim <= 0 {
-				return 0, tm, fmt.Errorf("неверная продолжительность <= 0")
-			}
-			tm = tim
-		}
+	steps, err := strconv.Atoi(sl[0])
+	if err != nil {
+		return 0, tm, err
 	}
 
-	return steps, tm, nil
+	if steps <= 0 {
+		return 0, tm, fmt.Errorf("numbers of steps <= 0")
+	}
+
+	tim, err := time.ParseDuration(sl[1])
+	if err != nil {
+		return 0, tm, err
+	}
+
+	if tim <= 0 {
+		return 0, tm, fmt.Errorf("wrong duration <= 0")
+	}
+
+	return steps, tim, nil
 }
 
 func DayActionInfo(data string, weight, height float64) string {
@@ -62,7 +52,6 @@ func DayActionInfo(data string, weight, height float64) string {
 
 	steps, tm, err := parsePackage(data)
 	if err != nil {
-		//fmt.Println(err.Error())
 		log.Println(err.Error())
 		return ""
 	}
@@ -71,8 +60,7 @@ func DayActionInfo(data string, weight, height float64) string {
 		return ""
 	}
 
-	dist := float64(steps) * stepLength
-	dist /= float64(mInKm)
+	dist := float64(steps) * stepLength / float64(mInKm)
 
 	calors, err := spentcalories.WalkingSpentCalories(steps, weight, height, tm)
 	if err != nil {
